@@ -1,0 +1,1 @@
+This demo blinks the ob-board LED (Port C bit 13) every ~1 second.
