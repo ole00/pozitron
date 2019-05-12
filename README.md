@@ -7,7 +7,7 @@ This is Work-In-Progress in early stages.
 Fetaures:
 * 96 MHz CPU, 64 kbytes of RAM, 512 kbytes of flash
 * 12 bit video output compatible with uzebox game console (BGR211+233)
-* DMA gnerated video signal (inspired by bitbox game console)
+* DMA generated video signal (inspired by bitbox game console)
 * code repository structure similar to uzebox
 * the aim is to be be source-code-compatible with uzebox code (for supported videomodes)
 
