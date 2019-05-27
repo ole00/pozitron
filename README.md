@@ -29,7 +29,7 @@ What works:
 * the existing demos can be built and uploaded to the dev board via STlink usb dongle 
 
 Not implemented yet:
-* video mode 3 and others :), though vmode 3 is probably the next to come.
+* video mode 3 and others :), though vmode 3 is probably the next to come. Update: non-scrolling vmode3 now seems to work. Tested with Arkanoid demo.
 * sd card access
 * custom bootloader and booting from sd card
 
