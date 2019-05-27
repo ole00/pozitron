@@ -168,6 +168,104 @@ bool IsPowerSwitchPressed(){
 }
 
 
+#if USE_EEPROM==1
+/*
+ * Write the specified structure into the specified EEPROM block id. 
+ * If the block does not exist, it is created.
+ *
+ * Returns:
+ *  0x00 = Success
+ * 	0x01 = EEPROM_ERROR_INVALID_BLOCK
+ *	0x02 = EEPROM_ERROR_FULL
+ */
+char EepromWriteBlock(struct EepromBlockStruct *block){
+	u16 eepromAddr=0;
+	u8 *srcPtr=(unsigned char *)block,res,nextFreeBlock=0;
+
+	res=EepromBlockExists(block->id,&eepromAddr,&nextFreeBlock);
+	if(res!=0 && res!=EEPROM_ERROR_BLOCK_NOT_FOUND) return res;
+
+	if(eepromAddr==0 && nextFreeBlock==0) return EEPROM_ERROR_FULL;
+	if(eepromAddr==0 && nextFreeBlock!=0) eepromAddr=nextFreeBlock*EEPROM_BLOCK_SIZE;
+
+	for(u8 i=0;i<EEPROM_BLOCK_SIZE;i++){
+		WriteEeprom(eepromAddr++,*srcPtr);
+		srcPtr++;	
+	}
+	
+	return 0;
+}
+
+/*
+ * Loads a data block from the in EEPROM into the specified structure.
+ *
+ * Returns: 
+ *  0x00 = Success
+ * 	0x01 = EEPROM_ERROR_INVALID_BLOCK
+ *	0x03 = EEPROM_ERROR_BLOCK_NOT_FOUND
+ */
+char EepromReadBlock(unsigned int blockId,struct EepromBlockStruct *block){	
+	u16 eepromAddr;
+	u8 *blockPtr=(unsigned char *)block;
+
+	u8 res=EepromBlockExists(blockId,&eepromAddr,NULL);
+	if(res!=0) return res;
+
+	for(u8 i=0;i<EEPROM_BLOCK_SIZE;i++){
+		*blockPtr=ReadEeprom(eepromAddr++);
+		blockPtr++;	
+	}
+	
+	return EEPROM_OK;
+}
+
+/*
+ * Scan is the specified EEPROM if block id exists. 
+ * @param eepromAddr Set with it adress in EEPROM memory if block exists or zero if doesn't exist
+ * @param nextFreeBlockId Set with id of next unnalocated block avaliable or zero (0) if all are allocated (i.e: eeprom is full)
+ * 
+ * @return
+ *  0x00 = Success, Block exists.
+ * 	0x01 = EEPROM_ERROR_INVALID_BLOCK.
+ *	0x03 = EEPROM_ERROR_BLOCK_NOT_FOUND.
+ */
+char EepromBlockExists(unsigned int blockId, u16* eepromAddr, u8* nextFreeBlockId){
+	u8 nextFreeBlock=0;
+	u8 result=EEPROM_ERROR_BLOCK_NOT_FOUND;
+	u16 id;
+	*eepromAddr=0;
+
+	if(blockId==EEPROM_FREE_BLOCK) return EEPROM_ERROR_INVALID_BLOCK;
+		
+	//scan all blocks and get the memory adress of that block and the next free block
+	for(u8 i=0;i<EEPROM_MAX_BLOCKS;i++){
+		id=ReadEeprom(i*EEPROM_BLOCK_SIZE)+(ReadEeprom((i*EEPROM_BLOCK_SIZE)+1)<<8);
+		
+		if(id==blockId){
+			*eepromAddr=(i*EEPROM_BLOCK_SIZE);
+			result=EEPROM_OK;
+		}
+		
+		if(id==0xffff && nextFreeBlock==0){
+			nextFreeBlock=i;
+			if(nextFreeBlockId!=NULL) *nextFreeBlockId=nextFreeBlock;					
+		}
+	}
+
+	return result;
+}
+
+unsigned char ReadEeprom(unsigned int addr) {
+	//TODO - implement
+	return 0;
+}
+
+void WriteEeprom(unsigned int addr, unsigned char value) {
+	//TODO - implement 
+}
+
+#endif /* USE_EEPROM==1*/
+
 /**
  * Generate a random number based on a LFSR. This function is *much* faster than avr-libc rand();
  * taps: 16 14 13 11; feedback polynomial: x^16 + x^14 + x^13 + x^11 + 1
