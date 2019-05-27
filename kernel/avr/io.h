@@ -3,5 +3,7 @@
 
 //misc definitions
 
+#define TCNT1 TIM4->CNT
+
 #endif
 
