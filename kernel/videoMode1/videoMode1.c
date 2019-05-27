@@ -145,12 +145,19 @@ void VideoModeVsync() {
 #define PIX6_5 *(buff++) = *tileDataPtr; tileDataPtr = tileDataNextPtr; 
 
 // Color tile 6 pixels
+#if CENTER_ADJUSTMENT
+#define TILE_6 if (posX >= 0) { PIX6_0 PIX6_1  PIX6_2 PIX6_3  PIX6_4  PIX6_5 } else { tileIndex++; posX += 6;} 
+#else
 #define TILE_6 PIX6_0 PIX6_1  PIX6_2 PIX6_3  PIX6_4  PIX6_5 
+#endif
 /* 
 * Paint single line of this videomode
 */
 void sub_video_mode1(void) {
 	uint16_t* buff = drawBuffer + 8;
+#if CENTER_ADJUSTMENT
+	int16_t posX = (CENTER_ADJUSTMENT / 4);
+#endif
 	uint16_t line = currentLine; 
 
 	uint8_t  tileLine = (line % TILE_HEIGHT) * TILE_WIDTH; 
@@ -159,6 +166,7 @@ void sub_video_mode1(void) {
 	uint8_t* tileDataPtr = vram[tileIndex] + tileLine;
 	uint8_t* tileDataNextPtr;
 	uint8_t** vramPtr;
+
 
 	TILE_6 TILE_6 TILE_6 TILE_6 TILE_6 TILE_6 TILE_6 TILE_6 //48 pixels
 	TILE_6 TILE_6 TILE_6 TILE_6 TILE_6 TILE_6 TILE_6 TILE_6 //96 pixels

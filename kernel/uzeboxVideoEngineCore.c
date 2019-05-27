@@ -48,6 +48,10 @@ Setup:
 
 #include "uzeboxVideoEngineCore.h"
 
+#ifdef VMODE_C_CORE_SOURCE
+#include VMODE_C_CORE_SOURCE
+#endif
+
 
 //On-board LED on Port C
 #define LED_GPIO_RCC       RCC_APB2Periph_GPIOC
@@ -310,7 +314,6 @@ void __attribute__ ((used)) TIM4_IRQHandler() {
         setupPixelDma(); // DMA will be triggered
 
         VMODE_FUNC(); //draw the line via video mode specific function
-        
     } else
 	//handle V syncs and V porches
 	{
@@ -318,8 +321,9 @@ void __attribute__ ((used)) TIM4_IRQHandler() {
 
         if (currentLine == VGA_V_PIXELS) {
 			currentFrame++;
+
 			VideoModeVsync();
-#if MODE1_FAST_VSYNC == 0
+#ifdef FPS_30
 			vsync_flag = currentFrame & 1; // set the sync flag every other frame
 #else
 			vsync_flag = 1;
@@ -448,7 +452,7 @@ void InitializeVideoCore(void) {
 
 void blinkLed(void) {
 	LED_GPIO_PORT->BRR = LED_GPIO_PIN; //on
-	Delay_ticks(0xFFFFF);
+	Delay_ticks(0xFFF);
 	LED_GPIO_PORT->BSRR = LED_GPIO_PIN; // off
 }
 

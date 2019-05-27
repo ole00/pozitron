@@ -74,6 +74,8 @@
 //set to MODE1_FAST_VSYNC=1 to sync on fields (60Hz) like other video modes
 #ifndef MODE1_FAST_VSYNC
 	#define MODE1_FAST_VSYNC 1
+#else
+	#define FPS_30
 #endif
 
 
