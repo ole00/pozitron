@@ -34,6 +34,10 @@ extern unsigned char sound_enabled;
 
 volatile uint16_t joystickState;
 
+uint16_t pgm_read_word(void* addr) {
+	return *((uint16_t*)addr);
+}
+
 /**
  * Dynamically sets the rasterizer parameters:
  * firstScanlineToRender = First scanline to render

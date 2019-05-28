@@ -791,7 +791,7 @@ void ProcessMusic(){
 					}else{
 						c2=pgm_read_byte(track->patchCommandStreamPos++);
 						//invoke patch command function
-						((PatchCommand)pgm_read_word(&patchCommands[c1]))(track,c2);
+						patchCommands[c1](track,c2);
 					}
 
 					//read next delta time
@@ -913,7 +913,7 @@ void TriggerCommon(Track* track,u8 patch,u8 volume,u8 note){
 		}else if(track->channel==4){
 				//PCM channel					
 				mixer.channels.type.pcm.positionFrac=0;
-				const char *pos=(const char*)pgm_read_word(&(patchPointers[patch].pcmData));
+				const char *pos=(const char*)*(&(patchPointers[patch].pcmData));
 				mixer.channels.type.pcm.position=pos;				
 				mixer.pcmLoopLenght=pgm_read_word(&(patchPointers[patch].loopEnd))-pgm_read_word(&(patchPointers[patch].loopStart));
 				mixer.pcmLoopEnd=pos+pgm_read_word(&(patchPointers[patch].loopEnd));
@@ -962,7 +962,7 @@ void TriggerCommon(Track* track,u8 patch,u8 volume,u8 note){
 		track->patchNo=patch;	
 	}
 
-	const char *pos = (const char*)pgm_read_word(&(patchPointers[patch].cmdStream));
+	const char *pos = (const char*)*(&(patchPointers[patch].cmdStream));
 	if(pos==NULL){
 		track->patchCommandStreamPos=NULL;
 	}else{
