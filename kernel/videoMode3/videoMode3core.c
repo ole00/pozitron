@@ -64,6 +64,10 @@ void SetTile(char x, char y, unsigned  int tileId) {
 	vram[(y * VRAM_TILES_H) + x] = (u8) (tileId + RAM_TILES_COUNT) ;
 }
 
+u8 GetTile(u8 x, u8 y) {
+    return vram[(y * VRAM_TILES_H) + x] - RAM_TILES_COUNT;
+}
+
 void SetFont(char x, char y, unsigned char  tileId) {
     vram[(y * VRAM_TILES_H) + x] = (u8) (tileId + RAM_TILES_COUNT + fontTileIndex);
 }
